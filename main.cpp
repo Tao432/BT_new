@@ -19,14 +19,14 @@ int main(int argc, char **argv)
     rclcpp::init(argc, argv);
     auto ros_node = std::make_shared<rclcpp::Node>("bt_node");
 
-    從 YAML 或環境中獲取實際參數值
-    double rx = node->get_parameter("reset_position.x").as_double();
-    double ry = node->get_parameter("reset_position.y").as_double();
-    double rz = node->get_parameter("reset_position.z").as_double();
-    double wx = node->get_parameter("wait_position.x").as_double();
-    double wy = node->get_parameter("wait_position.y").as_double();
-    double wz = node->get_parameter("wait_position.z").as_double();
-    double reset_to_grid_distance = node->get_parameter("reset_to_grid_distance").as_double();
+    //從 YAML 或環境中獲取實際參數值
+    double rx = ros_node->get_parameter("reset_position.x").as_double();
+    double ry = ros_node->get_parameter("reset_position.y").as_double();
+    double rz = ros_node->get_parameter("reset_position.z").as_double();
+    double wx = ros_node->get_parameter("wait_position.x").as_double();
+    double wy = ros_node->get_parameter("wait_position.y").as_double();
+    double wz = ros_node->get_parameter("wait_position.z").as_double();
+    double reset_to_grid_distance = ros_node->get_parameter("reset_to_grid_distance").as_double();
 
     BT::BehaviorTreeFactory factory;
 
@@ -54,7 +54,7 @@ int main(int argc, char **argv)
         tree.rootBlackboard()->set("wait_y", wy);
         tree.rootBlackboard()->set("wait_z", wz);
         tree.rootBlackboard()->set("reset_to_grid_distance", reset_to_grid_distance);
-        
+
         // 3. 运行行为树
         std::cout << "--- 开始运行行为树 ---" << std::endl;
         rclcpp::WallRate loop_rate(10); // 10Hz
