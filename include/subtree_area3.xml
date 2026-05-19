@@ -1,28 +1,34 @@
 <root BTCPP_format="4">
     <BehaviorTree ID="SubTree_area3">
         <Sequence name="root_sequence">
-            <Nevigation target_x="2.0" target_y="0.5" target_z="0.3"/>
-            <Dicision/>
-            <Switch2 variable="{have_kfs}" case_1="YES" case_2="NO">
-                <Sequence name="put_kfs">
-                    <Fallback>
-                        <Sequence>
-                            <Inverter>
-                                <IsHighEnough/>
-                            </Inverter>
-                            <ClimbOnR1/>
-                            <PutKfs/>
-                        </Sequence>
-                        
-                        <PutKfs/>
-                    </Fallback>
-                </Sequence>
+            <Nevigation target_x="{reset_x}" target_y="{reset_y}" target_z="{reset_z}"/>
 
-                <Sequence name="take_kfs">
-                    <Nevigation/>  <!--test-->
-                    <!-- <subtree ID="return_area2"/> -->
-                </Sequence>
-            </Switch2>
+            <Parallel success_count="1" failure_count="1">
+
+                <RunAISystem />
+
+                <Repeat num_cycles="-1">
+                    <Sequence name="Single_Task_Cycle">
+                    
+                        <DecisionNode out_target_y="{ty}" out_row="{row}" />
+
+                        <Nevigation target_x="{reset_x} - {reset_to_grid_distance}" target_y="{ty}" target_z="0.0" />
+                    
+                        <Sequence _skipIf="row != 0">
+                            <Nevigation target_x="{wait_x}" target_y="{wait_y}" target_z="{wait_z}" />
+                            <ClimbOnR1 />
+                        </Sequence>
+                    
+                        <putKfs />
+
+                        <Sequence _skipIf="row != 0">
+                            <ClimbOffR1 />
+                        </Sequence>
+
+                        <Nevigation target_x="{reset_x}" target_y="{reset_y}" target_z="{reset_z}" />
+                    </Sequence>
+                </Repeat>
+            </Parallel>
         </Sequence>
     </BehaviorTree>
 </root>

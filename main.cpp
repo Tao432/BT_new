@@ -9,6 +9,8 @@
 #include "isHighEnough.cpp"
 #include "climbOnR1.cpp"
 #include "putKfs.cpp"
+#include "RunAISystem.cpp"
+#include "climbOffR1.cpp"
 
 using namespace BT;
 
@@ -17,6 +19,15 @@ int main(int argc, char **argv)
     rclcpp::init(argc, argv);
     auto ros_node = std::make_shared<rclcpp::Node>("bt_node");
 
+    從 YAML 或環境中獲取實際參數值
+    double rx = node->get_parameter("reset_position.x").as_double();
+    double ry = node->get_parameter("reset_position.y").as_double();
+    double rz = node->get_parameter("reset_position.z").as_double();
+    double wx = node->get_parameter("wait_position.x").as_double();
+    double wy = node->get_parameter("wait_position.y").as_double();
+    double wz = node->get_parameter("wait_position.z").as_double();
+    double reset_to_grid_distance = node->get_parameter("reset_to_grid_distance").as_double();
+
     BT::BehaviorTreeFactory factory;
 
     // 1. 注册所有的自定义节点
@@ -24,16 +35,26 @@ int main(int argc, char **argv)
     [ros_node](const std::string& name, const NodeConfiguration& config) {
         return std::make_unique<Nevigation>(name, config, ros_node);
     });
-    factory.registerNodeType<Dicision>("Dicision");
+    factory.registerNodeType<RunAISystem>("RunAISystem", ros_node);
+    factory.registerNodeType<DecisionNode>("Decision", ros_node);
     factory.registerNodeType<IsHighEnough>("IsHighEnough");
     factory.registerNodeType<ClimbOnR1>("ClimbOnR1");
     factory.registerNodeType<PutKfs>("PutKfs");
+    factory.registerNodeType<ClimbOffR1>("ClimbOffR1");
 
     // 2. 从 XML 加载树形结构 (假设文件名为 subtree_area3.xml)
     // 注意：如果有子树 "return_area2"，也需要确保它被加载或注册
     try {
         auto tree = factory.createTreeFromFile("../include/subtree_area3.xml");
-
+        
+        tree.rootBlackboard()->set("reset_x", rx);
+        tree.rootBlackboard()->set("reset_y", ry);
+        tree.rootBlackboard()->set("reset_z", rz);
+        tree.rootBlackboard()->set("wait_x", wx);
+        tree.rootBlackboard()->set("wait_y", wy);
+        tree.rootBlackboard()->set("wait_z", wz);
+        tree.rootBlackboard()->set("reset_to_grid_distance", reset_to_grid_distance);
+        
         // 3. 运行行为树
         std::cout << "--- 开始运行行为树 ---" << std::endl;
         rclcpp::WallRate loop_rate(10); // 10Hz
