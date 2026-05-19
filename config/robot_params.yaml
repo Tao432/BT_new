@@ -1,0 +1,14 @@
+bt_main_node:
+  ros__parameters:
+    # 機器人放置完kfs後的固定復位/等待位置
+    reset_position:
+      x: 0.20  
+      y: 0.00  
+      z: 0.00
+    # R2合体的等待位置
+    wait_position:
+      x: 0.50 
+      y: 0.00   
+      z: 0.00
+    # 复位位置与九宫格距离  
+    reset_to_grid_distance: 0.30
