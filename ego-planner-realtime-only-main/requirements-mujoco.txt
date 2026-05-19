@@ -1,0 +1,6 @@
+mujoco==3.4.0
+numpy==1.26.4
+scipy==1.17.0
+onnxruntime==1.23.2
+pygame==2.6.1
+etils==1.13.0
