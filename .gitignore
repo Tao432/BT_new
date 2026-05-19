@@ -4,4 +4,3 @@ install/
 log/
 .vscode/
 *.o
-*.yaml
